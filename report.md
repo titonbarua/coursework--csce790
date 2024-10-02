@@ -3,14 +3,14 @@
 Author: Titon Barua <baruat@email.sc.edu>
 
 
-## Answer 1: MNIST Classifier
+## Probem 1: MNIST Classifier
 
 The code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_1/mnist_classifier.py). On top of the code described in the blogpost, I added some basic evaluation metrics. I also trained a second network with double the neurons for each layer. Both of the networks were trained for 15 epochs.
 
 With the second network, there was a slight improvement (0.42%) in overall classification accuracy. But there were some drops in precision and recall for some of the classes. With just 15 epochs of training, it is hard to assign any meaning to this fluctuations in precision and recall.
 
 
-### Network with \(128, 64\) neurons in two layers
+### Network with \(128, 64\) neurons in hidden layers
 
 - Average validation accuracy is 97.27%
 
@@ -24,7 +24,7 @@ Table: Precision and recall by class for first network
 
 ![Confusion matrix for network with (128, 64) neurons](./problem_1/confusion_matrix_128x64.png)
 
-### Network with \(256, 128\) neurons in two layers
+### Network with \(256, 128\) neurons in hidden layers
 
 Table: Precision and recall by class for second network
 
@@ -105,9 +105,17 @@ Recall:
 -->
 
 
+### Problem 2: Perceptron Response Graphs
 
+Graph generating code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_2/plot.py).
 
-### Answer 4
+![](./problem_2/perceptron_graph_a.pdf)
+
+![](./problem_2/perceptron_graph_b.pdf)
+
+### Problem 3: CNN from Scratch
+
+### Problem 4: Learning Techniques
 
 **Hebbian learning** is a biologically inspired learning rule. The core concept is that, given some randomly initialized neurons, if some training data activates two connected nodes simultaneously, their connecting weights should be enforced or increased. This iterative strengthening eventually leads to strong clustering of the hidden and output neurons.
 
@@ -147,7 +155,7 @@ is then updated to further strengthen it's response that class.
 \pagebreak
 
 
-### Answer 7
+### Problem 7: Linearity Test
 
 A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is linear if and only if for all $a \in \mathbb{R}$,
 

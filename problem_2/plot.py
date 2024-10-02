@@ -116,7 +116,7 @@ def plot_perceptrons(
         len(perceptron_list),
         subplot_kw={"projection": "3d",
                     "proj_type": "ortho"},
-        figsize=(8, 10))
+        figsize=(6.5, 8.5))
 
     if figure_title:
         fig.suptitle(figure_title, fontweight="bold")
