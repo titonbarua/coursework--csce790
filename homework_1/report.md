@@ -5,7 +5,7 @@ Author: Titon Barua <baruat@email.sc.edu>
 
 ## Probem 1: MNIST Classifier
 
-The code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_1/mnist_classifier.py). On top of the code described in the blogpost, I added some basic evaluation metrics. I also trained a second network with double the neurons for each layer. Both of the networks were trained for 15 epochs.
+The code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/homework_1/problem_1/mnist_classifier.py). On top of the code described in the blogpost, I added some basic evaluation metrics. I also trained a second network with double the neurons for each layer. Both of the networks were trained for 15 epochs.
 
 With the second network, there was a slight improvement (0.42%) in overall classification accuracy. But there were some drops in precision and recall for some of the classes. With just 15 epochs of training, it is hard to assign any meaning to this fluctuations in precision and recall.
 
@@ -107,7 +107,7 @@ Recall:
 
 ### Problem 2: Perceptron Response Graphs
 
-Graph generating code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_2/plot.py).
+Graph generating code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/homework_1/problem_2/plot.py).
 
 ![](./problem_2/perceptron_graph_a.pdf)
 
@@ -117,7 +117,7 @@ Graph generating code is available [here](https://github.com/titonbarua/coursewo
 
 ### Problem 3: CNN from Scratch
 
-The code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_3/nn_from_scratch.py). I did not like some of the implementations of the author and took the liberty to write them in my own way.
+The code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/homework_1/problem_3/nn_from_scratch.py). I did not like some of the implementations of the author and took the liberty to write them in my own way.
 
 - `relu`: Implemented by searching and zero-ing negative values with `numpy.argwhere`.
 - `conv`: Used `scipy.signal.convolve2d` as the baseline convolution implementation.
@@ -187,7 +187,7 @@ This tutorial was a fire-hose of graph neural network based techniques. The
 author introduced both the graph-level and node-level GNN techniques and
 compared them to a fully connected network. My implementation (a.k.a copy-paste)
 of the code is available
-[here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_5/graph_neural_networks.py).
+[here](https://github.com/titonbarua/coursework--csce790/blob/main/homework_1/problem_5/graph_neural_networks.py).
 I used my laptop with an NVIDIA GPU for training.
 
 On the `Cora` dataset, the fully connected network performed `60.60%` on test accuracy while demo node-level GNN model performed `81.10%`.
@@ -232,7 +232,7 @@ On `mutag` dataset, the graph-level GNN performed `92.11%` test accuracy.
 
 
 #### Signal Generation
-My implementation of the ODE solver for the chaotic systems is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_6/data_gen.py). I used different initial conditions compared to the paper, resulting in a different solution. Each time step was solved using 1000 iterations of first-order euler approximation.
+My implementation of the ODE solver for the chaotic systems is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/homework_1/problem_6/data_gen.py). I used different initial conditions compared to the paper, resulting in a different solution. Each time step was solved using 1000 iterations of first-order euler approximation.
 
 For the lorenz system, I was struggling initially as the system was seemingly
 diverging too quickly beyond double precision float capabilities. This lead me
@@ -259,7 +259,7 @@ using SGD or Adam optimizers, as the training error does not go down as
 expected. In the implementation of the paper, the authors used an analytical
 solution for training. It's either the training procedure or I have made a
 serious mistake in the network layout. My implementation is available
-[here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_6/reservoir_network.py).
+[here](https://github.com/titonbarua/coursework--csce790/blob/main/homework_1/problem_6/reservoir_network.py).
 
 Sample training session:
 ```
