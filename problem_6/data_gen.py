@@ -36,17 +36,13 @@ def calc_derivative_lorenz(a, b, c, state):
 
 def normalize_time_series(data):
     """Normalize data using eqn. 14 from the paper."""
-    n_data = data.shape[0]
-    outp = data[:]
-    states = data[:, 1:]
+    norm_data = data[:]
 
-    for i in range(1, n_data):
-        mean = np.mean(states[:i+1, :], axis=0)
-        p = states[i, :] - mean
-        q = np.sqrt(np.mean(np.square(states[:i+1, :] - mean)))
-        outp[i, 1:] = p / q
+    mean_ = np.mean(data[:, 1:], axis=0)
+    var_ = np.var(data[:, 1:], axis=0)
 
-    return outp
+    norm_data[:, 1:] = (data[:, 1:] - mean_) / var_
+    return norm_data
 
 
 def solve_ode_with_euler_approx(
