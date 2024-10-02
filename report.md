@@ -113,7 +113,35 @@ Graph generating code is available [here](https://github.com/titonbarua/coursewo
 
 ![](./problem_2/perceptron_graph_b.pdf)
 
+\pagebreak
+
 ### Problem 3: CNN from Scratch
+
+The code is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_3/nn_from_scratch.py). I did not like some of the implementations of the author and took the liberty to write them in my own way.
+
+- `relu`: Implemented by searching and zero-ing negative values with `numpy.argwhere`.
+- `conv`: Used `scipy.signal.convolve2d` as the baseline convolution implementation.
+- `max_pooling`: Used `block_reduce` function from `skimage.measure`.
+
+Note: Colorization of the grayscale feature maps is done by applying `viridis` colormap.
+
+![Layer1](./problem_3/layer1.pdf){width=50%}
+
+![Layer2](./problem_3/layer2.pdf){width=80%}
+
+![Layer3](./problem_3/layer3.pdf){width=80%}
+
+\pagebreak
+
+#### Algorithm
+
+1. Take a color image and convert it to grayscale.
+2. Create and apply two fixed convolutional filters, one for vertical edges; another for horizontal edges.
+3. Apply `ReLU` activation function on feature maps from step 2.
+4. Apply max-pooling to reduce size of feature maps from step 3.
+
+For second and third layer, filters in step-2 were replaced by random convolution kernels.
+
 
 ### Problem 4: Learning Techniques
 

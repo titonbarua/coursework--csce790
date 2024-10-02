@@ -1,3 +1,8 @@
+"""
+This module re-implements rudimentary CNN operations described in:
+https://www.kdnuggets.com/2018/04/building-convolutional-neural-network-numpy-scratch.html
+"""
+
 import numpy as np
 import skimage.data
 from skimage.measure import block_reduce
@@ -126,7 +131,7 @@ display_image_tile(
         "L2-Map2-ReLU-Pool",
     ],
     n_cols=2,
-    savepath="layer1.png"
+    savepath="layer1.pdf"
 )
 
 
@@ -166,7 +171,7 @@ display_image_tile(
         "L2-Map3-ReLU-Pool",
     ],
     n_cols=3,
-    savepath="layer2.png"
+    savepath="layer2.pdf"
 )
 
 # Third conv layer.
@@ -190,8 +195,5 @@ display_image_tile(
         "L3-Map1-ReLU-Pool",
     ],
     n_cols=3,
-    savepath="layer3.png"
+    savepath="layer3.pdf"
 )
-
-
-
