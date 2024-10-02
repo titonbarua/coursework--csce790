@@ -179,7 +179,6 @@ class of inputs, the output neuron with the maximal response is declared the
 winner and assigned to that particular class. The weights of the specific neuron
 is then updated to further strengthen it's response that class.
 
-
 \pagebreak
 
 ### Problem 5: Graph Neural Networks
@@ -227,7 +226,84 @@ On `mutag` dataset, the graph-level GNN performed `92.11%` test accuracy.
   it. This is accomplished by multiplying the node features by a weight vector
   and the adjacency matrix. Optionally, an attention layer is used.
 
+\pagebreak
 
+### Problem 6: Reservoir Networks
+
+
+#### Signal Generation
+My implementation of the ODE solver for the chaotic systems is available [here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_6/data_gen.py). I used different initial conditions compared to the paper, resulting in a different solution. Each time step was solved using 1000 iterations of first-order euler approximation.
+
+For the lorenz system, I was struggling initially as the system was seemingly
+diverging too quickly beyond double precision float capabilities. This lead me
+down the rabbit hole. Eventually I discovered the issue. Third equation of the
+lorenz system should be $$\frac{dz}{dt} = -\frac{8}{3}z + xy$$. A minus sign is
+missing in the paper. This is confirmed by the code associated with the paper
+where the mistake was corrected.
+
+![Simulation of the Rossler System](./problem_6/graphs/rossler_norm.pdf){width=80%}
+
+![Simulation of the Lorenz System](./problem_6/graphs/lorenz_norm.pdf){width=80%}
+
+
+#### Neural Network
+
+Misunderstanding the instructions of the assignment, I attempted to write my own
+implementation of a reservoir network in pytorch. It was a really good
+educational experience, as I had to implement the procedures for randomizing
+(using Erdos–Renyi model) and normalizing (by spectral radius adjustment using
+eigenvector analysis) the adjacency matrix.
+
+Unfortunately, my implementation is not fully functional and it is not trainable
+using SGD or Adam optimizers, as the training error does not go down as
+expected. In the implementation of the paper, the authors used an analytical
+solution for training. It's either the training procedure or I have made a
+serious mistake in the network layout. My implementation is available
+[here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_6/reservoir_network.py).
+
+Sample training session:
+```
+Epoch: 1, Loss: 5950.533141365897
+Epoch: 2, Loss: 1059.6563867851619
+Epoch: 3, Loss: 250.11835225978672
+Epoch: 4, Loss: 111.32755746470802
+Epoch: 5, Loss: 87.94520995608738
+Epoch: 6, Loss: 72.25983108251253
+Epoch: 7, Loss: 66.19928406275031
+Epoch: 8, Loss: 55.82608273224931
+Epoch: 9, Loss: 50.86386251086432
+Epoch: 10, Loss: 43.485477171082835
+Epoch: 11, Loss: 39.59159264126123
+Epoch: 12, Loss: 34.37489477303409
+Epoch: 13, Loss: 31.346768354827603
+Epoch: 14, Loss: 27.604957851696412
+Epoch: 15, Loss: 25.24027291437891
+Epoch: 16, Loss: 22.511169715716854
+Epoch: 17, Loss: 20.65837191540538
+Epoch: 18, Loss: 18.638831422310147
+Epoch: 19, Loss: 17.185097555595775
+Epoch: 20, Loss: 15.672879143036097
+Epoch: 21, Loss: 14.532055982271547
+Epoch: 22, Loss: 13.388974709606227
+Epoch: 23, Loss: 12.49405068095448
+Epoch: 24, Loss: 11.623496979916386
+Epoch: 25, Loss: 10.921855091522357
+Epoch: 26, Loss: 10.254897512137008
+Epoch: 27, Loss: 9.705070717791097
+Epoch: 28, Loss: 9.191659774708898
+Epoch: 29, Loss: 8.760947519684107
+Epoch: 30, Loss: 8.364206479398382
+Epoch: 31, Loss: 8.02684182505463
+Epoch: 32, Loss: 7.719268806313931
+Epoch: 33, Loss: 7.454975469212729
+Epoch: 34, Loss: 7.215857388623752
+Epoch: 35, Loss: 7.0087028585543365
+Epoch: 36, Loss: 6.822316107624026
+Epoch: 37, Loss: 6.659798129349782
+```
+
+
+\pagebreak
 
 
 ### Problem 7: Linearity Test
