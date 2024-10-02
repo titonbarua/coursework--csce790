@@ -182,6 +182,53 @@ is then updated to further strengthen it's response that class.
 
 \pagebreak
 
+### Problem 5: Graph Neural Networks
+
+This tutorial was a fire-hose of graph neural network based techniques. The
+author introduced both the graph-level and node-level GNN techniques and
+compared them to a fully connected network. My implementation (a.k.a copy-paste)
+of the code is available
+[here](https://github.com/titonbarua/coursework--csce790/blob/main/problem_5/graph_neural_networks.py).
+I used my laptop with an NVIDIA GPU for training.
+
+On the `Cora` dataset, the fully connected network performed `60.60%` on test accuracy while demo node-level GNN model performed `81.10%`.
+
+```python
+train_and_test_mlp()
+# Train accuracy: 97.14%
+# Val accuracy:   50.40%
+# Test accuracy:  60.60%
+
+train_and_test_gnn()
+# Train accuracy: 100.00%
+# Val accuracy:   76.20%
+# Test accuracy:  81.10%
+```
+
+On `mutag` dataset, the graph-level GNN performed `92.11%` test accuracy.
+
+```python
+# Train performance: 91.29%
+# Test performance:  92.11%
+```
+
+### General Ideas of GNN
+
+- A graph works as the input. Each node has some feature vector attached. The
+  relationship between the nodes is expressed using an adjacency matrix. The
+  matrix is modified to have self-connection.
+
+- To normalize importance of well connected nodes, the matrix is multiplied on
+  both sides by a diagonal matrix. The structure seems surprisingly similar to
+  *graph laplacian* used in eigenvalue analysis based spectral clustering
+  techniques.
+
+- In each update step, a node receives messages from all the nodes adjacent to
+  it. This is accomplished by multiplying the node features by a weight vector
+  and the adjacency matrix. Optionally, an attention layer is used.
+
+
+
 
 ### Problem 7: Linearity Test
 
