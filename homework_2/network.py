@@ -168,6 +168,13 @@ class MLP(object):
         """Make a prediction from the given input."""
         return self.forward_pass(input_)[-1][-1]
 
+    def infer_batch(self, input_batch):
+        """Predict a batch of input data."""
+        Y_batch = []
+        for X in input_batch:
+            Y_batch.append(self.infer(X))
+        return np.array(Y_batch).squeeze()
+
     def backprop(self, Y_target, signals):
         """Back-propagate the loss to calculate gradients for each weight.
 
@@ -238,7 +245,9 @@ def train_network(
         # Valid values are: stochastic, mini-batch, batch
         mode='stochastic',
         epochs=500,
-        learning_rate=0.01):
+        snapshot_callback=None,
+        learning_rate=0.01,
+        print_progress=True):
 
     if mode == 'stochastic':
 
@@ -260,12 +269,16 @@ def train_network(
 
             # print(loss_hist)
             avg_loss = np.mean(np.array(loss_hist).squeeze(), axis=0)
-            pred_Y = np.array(
-                [net.infer(X) for X in train_X]).squeeze()
+            pred_Y = net.infer_batch(train_X)
             acc = calc_accuracy_fn(train_Y, pred_Y)
-            print(
-                "Epoch: {}, Avg. loss: {}, Accuracy: {}"
-                .format(n, avg_loss, acc))
+
+            if snapshot_callback:
+                snapshot_callback(net, {"epoch": n})
+
+            if print_progress:
+                print(
+                    "Epoch: {}, Avg. loss: {}, Accuracy: {}"
+                    .format(n, avg_loss, acc))
 
     elif mode == 'batch':
 
@@ -284,9 +297,6 @@ def train_network(
                 grads = net.backprop(Y, signals)
                 grads_hist.append(grads)
 
-                # Update weights using gradient descent.
-                # net.update_weights(grads, lr=learning_rate)
-
             # Calculate mean gradient at each layer.
             avg_grads = []
             for i in range(len(grads_hist[0])):
@@ -298,12 +308,16 @@ def train_network(
 
             # print(loss_hist)
             avg_loss = np.mean(np.array(loss_hist).squeeze(), axis=0)
-            pred_Y = np.array(
-                [net.infer(X) for X in train_X]).squeeze()
+            pred_Y = net.infer_batch(train_X)
             acc = calc_accuracy_fn(train_Y, pred_Y)
-            print(
-                "Epoch: {}, Avg. loss: {}, Accuracy: {}"
-                .format(n, avg_loss, acc))
+
+            if snapshot_callback:
+                snapshot_callback(net, {"epoch": n})
+
+            if print_progress:
+                print(
+                    "Epoch: {}, Avg. loss: {}, Accuracy: {}"
+                    .format(n, avg_loss, acc))
 
     else:
         raise ValueError("Unsupported training mode.")
@@ -336,29 +350,6 @@ def test_regression_sigmoid_1():
 
 def test_regression_relu_1():
     """A test network with relu activation function to do regression."""
-    mlp = MLP(
-        input_dim=1,
-        layer_spec=[
-            {"type": "linear", "n_neurons": 5},
-            {"type": "relu"},
-            {"type": "linear", "n_neurons": 20},
-            {"type": "relu"},
-            {"type": "linear", "n_neurons": 2},
-        ],
-        debug=False)
-
-    # Create training data.
-    train_X = np.linspace(0.0, 5.0, 10).reshape(-1, 1)
-    train_Y1 = (10 + 3 * train_X) / (train_X + 0.5)
-    train_Y2 = 2 * train_X + np.square(train_X)
-    train_Y = np.hstack((train_Y1, train_Y2))
-
-    train_network(
-        mlp, train_X, train_Y, r2_score, epochs=500, learning_rate=0.001)
-
-
-def test_classification_relu_1():
-    """A test network with relu activation function to do binary classification."""
     mlp = MLP(
         input_dim=1,
         layer_spec=[
