@@ -72,7 +72,7 @@ def plot_epoch_vs_mse_error_graph(epoch_vs_mse, filepath=None):
     ax.plot(epochs, mse_errors, color="blue")
     ax.grid()
     ax.set_xlabel("Epoch")
-    ax.set_ylabel("Training Mean Absolute Error")
+    ax.set_ylabel("Training Mean Squared Error")
 
     fig.suptitle("Training Epoch vs MSE Error Graph")
 
