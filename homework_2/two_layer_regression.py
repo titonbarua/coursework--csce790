@@ -55,7 +55,9 @@ train_Y = np.array(
 net = MLP(
     input_dim=1,
     layer_spec=[
-        {"type": "linear", "n_neurons": 1000},
+        {"type": "linear", "n_neurons": 100},
+        {"type": "relu"},
+        {"type": "linear", "n_neurons": 20},
         {"type": "relu"},
         {"type": "linear", "n_neurons": 1},
     ])
