@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import r2_score, mean_absolute_error
+from sklearn.metrics import r2_score, mean_squared_error
 from network import MLP, train_network
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -55,7 +55,7 @@ train_Y = np.array(
 net = MLP(
     input_dim=1,
     layer_spec=[
-        {"type": "linear", "n_neurons": 100},
+        {"type": "linear", "n_neurons": 35},
         {"type": "relu"},
         {"type": "linear", "n_neurons": 20},
         {"type": "relu"},
@@ -63,18 +63,18 @@ net = MLP(
     ])
 
 
-def plot_epoch_vs_mae_error_graph(epoch_vs_mae, filepath=None):
+def plot_epoch_vs_mse_error_graph(epoch_vs_mse, filepath=None):
     fig, ax = plt.subplots()
 
-    epochs = [ep for ep, _ in epoch_vs_mae]
-    mae_errors = [err for _, err in epoch_vs_mae]
+    epochs = [ep for ep, _ in epoch_vs_mse]
+    mse_errors = [err for _, err in epoch_vs_mse]
 
-    ax.plot(epochs, mae_errors, color="blue")
+    ax.plot(epochs, mse_errors, color="blue")
     ax.grid()
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Training Mean Absolute Error")
 
-    fig.suptitle("Training Epoch vs MAE Error Graph")
+    fig.suptitle("Training Epoch vs MSE Error Graph")
 
     if filepath:
         fig.savefig(filepath, dpi=300)
@@ -108,7 +108,7 @@ def plot_predictions(
     plt.show(block=True)
 
 
-epoch_vs_mae_error = []
+epoch_vs_mse_error = []
 epoch_vs_predictions = []
 
 
@@ -119,9 +119,9 @@ def snapshot_callback(network, props):
     if epoch in (10, 100, 200, 400, 1000):
         epoch_vs_predictions.append((epoch, pred_Y))
 
-    mae_error = mean_absolute_error(train_Y, pred_Y)
-    epoch_vs_mae_error.append((epoch, mae_error))
-    # print("Epoch: {}, MAE: {}".format(epoch, mae_error))
+    mse_error = mean_squared_error(train_Y, pred_Y)
+    epoch_vs_mse_error.append((epoch, mse_error))
+    # print("Epoch: {}, MSE: {}".format(epoch, mse_error))
 
 
 train_network(
@@ -135,9 +135,9 @@ train_network(
     learning_rate=0.001)
 
 
-plot_epoch_vs_mae_error_graph(
-    epoch_vs_mae_error,
-    "b.2-epoch_vs_mae_error_graph.pdf")
+plot_epoch_vs_mse_error_graph(
+    epoch_vs_mse_error,
+    "b.2-epoch_vs_mse_error_graph.pdf")
 
 plot_predictions(
     train_X,
