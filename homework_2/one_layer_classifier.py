@@ -189,8 +189,8 @@ train_network(
 plot_epoch_vs_bce_error_graph(
     epoch_vs_bce_error,
     epoch_vs_accuracy,
-    "2.a-epoch_vs_bce_error.pdf")
+    "b.1-epoch_vs_bce_error.pdf")
 
 plot_decision_boundaries(
     epoch_vs_decision_boundary,
-    "2.a-decision_boundaries.pdf")
+    "b.1-decision_boundaries.pdf")
