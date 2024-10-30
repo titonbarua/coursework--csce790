@@ -45,9 +45,10 @@ def grad_mse_loss(Y_target, Y_pred):
 
 def bce_loss(Y_target, Y_pred):
     # https://sebastianraschka.com/blog/2022/losses-learned-part1.html
-    first = -Y_target @ np.log(Y_pred)
-    second = -(1 - Y_target) @ np.log(1 - Y_pred)
-    return (first + second) / Y_target.shape[0]
+    Y_pred = Y_pred.squeeze()
+    first = -Y_target * np.log(Y_pred)
+    second = -(1 - Y_target) * np.log(1 - Y_pred)
+    return np.mean(first + second, axis=0)
 
 
 def grad_bce_loss(Y_target, Y_pred):
@@ -275,7 +276,7 @@ def train_network(
             acc = calc_accuracy_fn(train_Y, pred_Y)
 
             if snapshot_callback:
-                snapshot_callback(net, {"epoch": n})
+                snapshot_callback(net, {"epoch": n, "accuracy": acc})
 
             if print_progress:
                 print(
@@ -314,7 +315,7 @@ def train_network(
             acc = calc_accuracy_fn(train_Y, pred_Y)
 
             if snapshot_callback:
-                snapshot_callback(net, {"epoch": n})
+                snapshot_callback(net, {"epoch": n, "accuracy": acc})
 
             if print_progress:
                 print(
