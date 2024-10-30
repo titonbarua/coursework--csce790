@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.metrics import r2_score, mean_absolute_error
 from network import MLP, train_network
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 
 train_X = np.array(
@@ -59,6 +61,51 @@ net = MLP(
     ])
 
 
+def plot_epoch_vs_mae_error_graph(epoch_vs_mae, filepath=None):
+    fig, ax = plt.subplots()
+
+    epochs = [ep for ep, _ in epoch_vs_mae]
+    mae_errors = [err for _, err in epoch_vs_mae]
+
+    ax.plot(epochs, mae_errors, color="blue")
+    ax.grid()
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Training Mean Absolute Error")
+
+    fig.suptitle("Training Epoch vs MAE Error Graph")
+
+    if filepath:
+        fig.savefig(filepath, dpi=300)
+
+    plt.show(block=True)
+
+
+def plot_predictions(
+        train_X,
+        train_Y,
+        epoch_vs_pred,
+        filepath=None):
+    mpl.style.use("default")
+    fig, ax = plt.subplots()
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    fig.suptitle("Comparison of predictions from different training epochs")
+
+    # Draw ground truth.
+    ax.scatter(train_X, train_Y, color="gray", label='$f(x)$', marker='+')
+
+    # Draw neural network outputs by epoch.
+    for i, (epoch, pred) in enumerate(epoch_vs_pred):
+        ax.plot(train_X, pred, color=f'C{i}', label=f"epoch {epoch}", alpha=0.7)
+
+    ax.legend()
+
+    if filepath:
+        fig.savefig(filepath, dpi=300)
+
+    plt.show(block=True)
+
+
 epoch_vs_mae_error = []
 epoch_vs_predictions = []
 
@@ -72,7 +119,7 @@ def snapshot_callback(network, props):
 
     mae_error = mean_absolute_error(train_Y, pred_Y)
     epoch_vs_mae_error.append((epoch, mae_error))
-    print("Epoch: {}, MAE: {}".format(epoch, mae_error))
+    # print("Epoch: {}, MAE: {}".format(epoch, mae_error))
 
 
 train_network(
@@ -82,4 +129,16 @@ train_network(
     calc_accuracy_fn=r2_score,
     snapshot_callback=snapshot_callback,
     print_progress=False,
+    epochs=1000,
     learning_rate=0.001)
+
+
+plot_epoch_vs_mae_error_graph(
+    epoch_vs_mae_error,
+    "b.2-epoch_vs_mae_error_graph.pdf")
+
+plot_predictions(
+    train_X,
+    train_Y,
+    epoch_vs_predictions,
+    filepath="b.2-prediction_comparison.pdf")

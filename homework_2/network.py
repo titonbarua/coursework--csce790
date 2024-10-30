@@ -1,7 +1,9 @@
 import numpy as np
 from sklearn.metrics import r2_score
 
-rng = np.random.default_rng()
+RANDOM_STATE = 123123
+
+rng = np.random.default_rng(seed=RANDOM_STATE)
 
 
 def relu(X):
