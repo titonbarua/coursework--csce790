@@ -52,8 +52,6 @@ def thresholded_accuracy_score(Y_true, Y_pred, threshold=0.5):
 net = MLP(
     input_dim=2,
     layer_spec=[
-        {"type": "linear", "n_neurons": 120},
-        {"type": "sigmoid"},
         {"type": "linear", "n_neurons": 2},
         {"type": "sigmoid"},
     ],
