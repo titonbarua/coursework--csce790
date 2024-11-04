@@ -11,7 +11,7 @@ This paper is the seminal work that brought back-propagation (a.k.a. automatic
 differentiation) into the mainstream in the context of neural network training.
 To summarize the algorithm described in the paper -
 
-1. For a set a of training inputs and labels, do forward computation to get a
+1. For a set a of training inputs and labels, do forward computations to get a
    prediction. Make sure to save all the intermediate computations.
 2. Calculate the difference between true labels vs the predictions using some
    metric. This is the error.
@@ -59,9 +59,9 @@ I have implemented a general framework for simple multi-layer perceptrons, along
 with hand-rolled back-propagation, using numpy. The network class `MLP`, along
 with some routines for training is implemented inside the
 [network.py](https://github.com/titonbarua/coursework--csce790/blob/main/homework_2/network.py)
-file. `MLP` class can be invoked with different a sequence of layer
-specifications to configure network topology and complexity. The file also
-contains two simple neural networks as test cases.
+file. `MLP` class can be invoked with a sequence of layer specifications to
+configure network topology and complexity. The file also contains two simple
+neural networks as test cases.
 
 Initially I implemented the back-propagation algorithm using various matrix
 operations offered in numpy. Later, I found einstein-summation notation to be
