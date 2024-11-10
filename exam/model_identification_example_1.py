@@ -111,8 +111,7 @@ class LearnedFn(nn.Module):
             Sigmoidal(),
             nn.Linear(20, 10),
             Sigmoidal(),
-            nn.Linear(10, 1),
-            Sigmoidal())
+            nn.Linear(10, 1))
 
         self.linear_stack.to(device)
 
@@ -316,12 +315,12 @@ def train_and_evaluate_fn2():
 
     eval_and_plot(
         gen_input_signal_b,
-        "; Original input signal",
+        "; Paper described input signal",
         FN2_GRAPH1_FILENAME)
 
     eval_and_plot(
         gen_input_signal_b_modified,
-        "; Second-half adjusted input signal",
+        "; Training range aware input signal",
         FN2_GRAPH2_FILENAME)
 # ------------------------------------------------'
 
