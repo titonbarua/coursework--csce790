@@ -6,6 +6,7 @@ KUMPATI S. NARENDRA FELLOW, IEEE. AND KANNAN PARTHASARATHY
 Author: Titon Barua <baruat@email.sc.edu>
 """
 
+import numpy as np
 import torch
 from torch import nn
 import matplotlib.pyplot as plt
@@ -24,20 +25,44 @@ FN2_GRAPH1_FILENAME = "ex1_fn2.pdf"
 FN2_GRAPH2_FILENAME = "ex1_fn2_modified_signal.pdf"
 
 
-def evolve_sys(y_hist, non_linear_fn_output):
-    """Calculate output of the dynamical system."""
-    past_y1 = y_hist[-1] if len(y_hist) > 0 else 0.0
-    past_y2 = y_hist[-2] if len(y_hist) > 1 else 0.0
-    return 0.3 * past_y1 + 0.6 * past_y2 + non_linear_fn_output
+def evolve_sys(y_hist, u_hist, calc_f, u_k, k):
+    """Evolve the dynamical system into next time step.
+
+    Args:
+    - y_hist: A list of past values of plant output `y` of size `(k - 1)`.
+    - u_hist: A list of past values of plant input `u` of size `(k - 1)`.
+    - calc_f: A Non-linear function of plant input `u`.
+    - u_k: Plant input at current time step.
+    - k: The zero-indexed time-step.
+
+    Returns:
+    A tuple of format: `(y_k, (f_k, f_k_inp), y_hist_updated, u_hist_updated)`,
+    where
+      - `y_k` is the plant output.
+      - `f_k` is the output of `calc_f`.
+      - `f_k_inp` is the input used to generate `f_k`.
+      - `y_hist_updated` is the updated `y_hist`.
+      - `u_hist_updated` is the updated `u_hist`.
+
+    """
+    past_y1 = y_hist[k - 1] if k > 0 else 0.0
+    past_y2 = y_hist[k - 2] if k > 1 else 0.0
+
+    f_k_inp = u_hist[k - 1] if k > 0 else 0.0
+    f_k = calc_f(f_k_inp)
+
+    y_k = 0.3 * past_y1 + 0.6 * past_y2 + f_k
+
+    return (y_k, (f_k, f_k_inp), y_hist + [y_k], u_hist + [u_k])
 
 
 def calc_non_linear_fn1(u):
     """Calculate ground truth of non-linear function."""
-    pi_u = torch.pi * u
+    pi_u = np.pi * u
     return (
-        0.6 * torch.sin(pi_u) +
-        0.3 * torch.sin(3 * pi_u) +
-        0.1 * torch.sin(5 * pi_u))
+        0.6 * np.sin(pi_u) +
+        0.3 * np.sin(3 * pi_u) +
+        0.1 * np.sin(5 * pi_u))
 
 
 def calc_non_linear_fn2(u):
@@ -49,19 +74,19 @@ def calc_non_linear_fn2(u):
 # ------------------------------------------------------------,
 def gen_input_signal_a(k):
     """Generate sinusoidal input signal for the system."""
-    return torch.sin((2.0 * torch.pi * k) / 250.0)
+    return np.sin((2.0 * np.pi * float(k)) / 250.0)
 
 
 def gen_input_signal_b(k):
     """Generate sinusoidal input signal for the system."""
-    z = 2.0 * torch.pi * k
-    return torch.sin(z/250.0) + torch.sin(z/25.0)
+    z = 2.0 * np.pi * k
+    return np.sin(z/250.0) + np.sin(z/25.0)
 
 
 def gen_input_signal_b_modified(k):
     """Generate sinusoidal input signal for the system."""
-    z = 2.0 * torch.pi * k
-    return (torch.sin(z/250.0) + torch.sin(z/25.0)) / 2.0
+    z = 2.0 * np.pi * k
+    return (np.sin(z/250.0) + np.sin(z/25.0)) / 2.0
 # ------------------------------------------------------------'
 
 
@@ -107,17 +132,18 @@ def train_and_evaluate_fn1():
     print(
         f"Generating {FN1_SIGA_EVAL_STEPS} training"
         f" samples using input signal 1 ...")
-    time_steps = torch.arange(0, FN1_SIGA_EVAL_STEPS)
-    x_list = []
-    z_list = []
+    time_steps = torch.arange(FN1_SIGA_EVAL_STEPS)
     y_list = []
+    u_list = []
+    f_list = []
+    f_inp_list = []
     for k in time_steps:
-        x = gen_input_signal_a(k)
-        z = calc_non_linear_fn1(x)
-        y = evolve_sys(y_list, z)
-        x_list.append(x)
-        z_list.append(z)
-        y_list.append(y)
+        u_k = gen_input_signal_a(k)
+        _, (f_k, f_k_inp), y_list, u_list = evolve_sys(
+            y_list, u_list, calc_non_linear_fn1, u_k, k)
+
+        f_list.append(f_k)
+        f_inp_list.append(f_k_inp)
     # -----------------------------------------------'
 
     # Synchronously train and predict.
@@ -126,20 +152,30 @@ def train_and_evaluate_fn1():
         f"Training and evaluating network "
         f"for {FN1_SIGA_SYNC_TRAIN_STEPS} steps ...")
     pred_y_list = []
-    for k in range(FN1_SIGA_SYNC_TRAIN_STEPS):
-        train_x = torch.tensor(x_list[k]).unsqueeze(0)
-        train_z = torch.tensor(z_list[k]).unsqueeze(0)
+    pred_u_list = []
+
+    # Convert data to pytorch tensors and add batch dimension.
+    f_list = torch.from_numpy(
+        np.array(f_list, dtype=np.float32).reshape(1, -1))
+    f_inp_list = torch.from_numpy(
+        np.array(f_inp_list, dtype=np.float32).reshape(1, -1))
+
+    for k in torch.arange(FN1_SIGA_SYNC_TRAIN_STEPS):
+        train_f = f_list[:, k]
+        train_f_inp = f_inp_list[:, k]
 
         optim.zero_grad()
-        pred_z = net(train_x)
-        loss = criterion(pred_z, train_z)
+        pred_f = net(train_f_inp)
+        loss = criterion(pred_f, train_f)
         loss.backward()
         optim.step()
 
-        pred_y_list.append(
-           evolve_sys(
-               pred_y_list,
-               net(train_x).item()))
+        _, _, pred_y_list, pred_u_list = evolve_sys(
+            pred_y_list,
+            pred_u_list,
+            lambda x: net(torch.tensor(x, dtype=torch.float32).reshape(1, 1)).item(),
+            u_list[k],
+            k)
     # ------------------------------------------------'
 
     # Keep predicting.
@@ -148,11 +184,12 @@ def train_and_evaluate_fn1():
     for k in range(
             FN1_SIGA_SYNC_TRAIN_STEPS,
             FN1_SIGA_EVAL_STEPS):
-        eval_x = torch.tensor(x_list[k]).unsqueeze(0)
-        pred_y_list.append(
-            evolve_sys(
-                pred_y_list,
-                net(eval_x).item()))
+        _, _, pred_y_list, pred_u_list = evolve_sys(
+            pred_y_list,
+            pred_u_list,
+            lambda x: net(torch.tensor(x, dtype=torch.float32) .reshape(1, 1)).item(),
+            u_list[k],
+            k)
     # ------------------------------------------------'
 
     # Plot graph.
@@ -185,26 +222,38 @@ def train_and_evaluate_fn2():
         f"Generating {FN2_SIGA_RANDOM_TRAIN_STEPS} "
         f"random training samples ...")
     # Choose some random input samples within (-1, 1).
-    train_x_list = 2.0 * (torch.rand(FN2_SIGA_RANDOM_TRAIN_STEPS) - 0.5)
-    train_z_list = []
+    train_u_list = list(2.0 * (np.random.rand(FN2_SIGA_RANDOM_TRAIN_STEPS) - 0.5))
     train_y_list = []
-    for x in train_x_list:
-        z = calc_non_linear_fn2(x)
-        y = evolve_sys(train_y_list, z)
-        train_z_list.append(z)
-        train_y_list.append(y)
+    train_f_list = []
+    train_f_inp_list = []
+    for k, u_k in enumerate(train_u_list):
+        _, (f_k, f_k_inp), train_y_list, train_u_list = evolve_sys(
+            train_y_list,
+            train_u_list,
+            calc_non_linear_fn2,
+            u_k,
+            k)
+
+        train_f_list.append(f_k)
+        train_f_inp_list.append(f_k_inp)
     # -----------------------------------------------'
 
     # Train the network using the random training data.
     # ------------------------------------------------,
     print("Training network ...")
+    # Convert data to pytorch tensors and add batch dimension.
+    train_f_list = torch.from_numpy(
+        np.array(train_f_list, dtype=np.float32).reshape(1, -1))
+    train_f_inp_list = torch.from_numpy(
+        np.array(train_f_inp_list, dtype=np.float32).reshape(1, -1))
+
     for k in range(FN2_SIGA_RANDOM_TRAIN_STEPS):
-        train_x = train_x_list[k].unsqueeze(0)
-        train_z = train_z_list[k].unsqueeze(0)
+        train_f = train_f_list[:, k]
+        train_f_inp = train_f_inp_list[:, k]
 
         optim.zero_grad()
-        pred_z = net(train_x)
-        loss = criterion(pred_z, train_z)
+        pred_f = net(train_f_inp)
+        loss = criterion(pred_f, train_f)
         loss.backward()
         optim.step()
     # ------------------------------------------------'
@@ -212,31 +261,44 @@ def train_and_evaluate_fn2():
     # Predict using input signal 2.
     # ------------------------------------------------,
     print("Evaluating identified model using combination of signal A and B ...")
-    time_steps = torch.arange(
-        FN2_SIGA_EVAL_STEPS + FN2_SIGB_EVAL_STEPS)
+    time_steps = range(FN2_SIGA_EVAL_STEPS + FN2_SIGB_EVAL_STEPS)
 
+    # Purpose of this function is to generate two variants of graph using two
+    # slightly different input signals.
     def eval_and_plot(
             gen_input_signal_b,
             title_suffix,
             graph_filename):
-        eval_x_list = []
+
+        def calc_u(k):
+            return (
+                gen_input_signal_a(k)
+                if k < FN2_SIGA_EVAL_STEPS
+                else gen_input_signal_b(k))
+
+        # Generate ground truth data.
+        eval_u_list = []
         eval_y_list = []
         for k in time_steps:
-            x = (gen_input_signal_a(k)
-                 if k < FN2_SIGA_EVAL_STEPS
-                 else gen_input_signal_b(k))
-            z = calc_non_linear_fn2(x)
-            y = evolve_sys(eval_y_list, z)
-            eval_x_list.append(x)
-            eval_y_list.append(y)
+            u_k = calc_u(k)
+            _, _, eval_y_list, eval_u_list = evolve_sys(
+                eval_y_list,
+                eval_u_list,
+                calc_non_linear_fn2,
+                u_k,
+                k)
 
+        # Generate prediction data.
+        pred_u_list = []
         pred_y_list = []
         for k in time_steps:
-            eval_x = eval_x_list[k].unsqueeze(0)
-            pred_y_list.append(
-                evolve_sys(
-                    pred_y_list,
-                    net(eval_x).item()))
+            u_k = eval_u_list[k]
+            _, _, pred_y_list, pred_u_list = evolve_sys(
+                pred_y_list,
+                pred_u_list,
+                lambda x: net(torch.tensor(x, dtype=torch.float32).reshape(1, 1)).item(),
+                u_k,
+                k)
 
         # Plot graph.
         ax = plt.subplot()
