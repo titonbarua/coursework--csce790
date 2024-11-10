@@ -204,8 +204,8 @@ def train_and_evaluate_fn1():
     ax.set_xlabel("Timestep, $k$")
     ax.legend()
     ax.figure.set_size_inches(8, 3)
+    ax.figure.tight_layout()
     ax.figure.savefig(FN1_GRAPH_FILENAME)
-    plt.tight_layout()
     plt.show()
 
 
@@ -219,6 +219,7 @@ def train_and_evaluate_fn2():
     # -----------------------------------------------,
     print(
         f"Generating {FN2_SIGA_RANDOM_TRAIN_STEPS} "
+
         f"random training samples ...")
     # Choose some random input samples within (-1, 1).
     train_u_list = list(2.0 * (np.random.rand(FN2_SIGA_RANDOM_TRAIN_STEPS) - 0.5))
