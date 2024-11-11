@@ -11,9 +11,9 @@ The simulation in example 1 is implemented [here](https://github.com/titonbarua/
 
 ![Example 1, Plant vs learned NN, training stopped at k = 500](./ex1_fn1.pdf)
 
-![Example 1, Plant vs learned NN after training with random input for 50000 iterations. Note that the second half of the input signal amplitude is not properly predicted by the model. This is due to input signal range being (-2, 2) while training was done on range (-1, 1)](./ex1_fn2.pdf) 
+![Example 1, Plant vs learned NN after training with random input for 50000 iterations. Note that the second half of the plant output amplitude is not properly predicted by the model. This is due to input signal range being (-2, 2) while training was done on range (-1, 1)](./ex1_fn2.pdf)
 
-![Example 1, Plant vs learned NN after training with random input for 50000 iterations. Input signal modified to match training range](./ex1_fn2_modified_signal.pdf) 
+![Example 1, Plant vs learned NN after training with random input for 50000 iterations. Input signal has been modified to match training range](./ex1_fn2_modified_signal.pdf)
 
 
 ### Example 3
@@ -32,6 +32,6 @@ The simulation in example 7 is implemented [here](https://github.com/titonbarua/
 
 ![Example 7, Model identification using technique described in example 2](./ex7_model_identification.pdf)
 
-![Example 7, Refernce model output compared to no-control plant](./ex7_comparison_ref_model_vs_plant_no_control.pdf)
+![Example 7, Reference model output compared to no-control plant](./ex7_comparison_ref_model_vs_plant_no_control.pdf)
 
-![Example 7, Refernce model output compared to plant with adaptive control](./ex7_comparison_ref_model_vs_plant_with_control.pdf)
+![Example 7, Reference model output compared to plant with adaptive control](./ex7_comparison_ref_model_vs_plant_with_control.pdf)
