@@ -14,12 +14,10 @@ import matplotlib.pyplot as plt
 LEARNING_RATE = 0.05
 
 RANDOM_TRAIN_STEPS = 100000
-# RANDOM_TRAIN_STEPS = 100000
 EVAL_STEPS = 100
 FIG_MODEL_ID_FILENAME = "ex7_model_identification.pdf"
 FIG_COMPARE_REF_VS_PLANT_NO_CTRL = "ex7_comparison_ref_model_vs_plant_no_control.pdf"
 FIG_COMPARE_REF_VS_PLANT_WITH_CTRL = "ex7_comparison_ref_model_vs_plant_with_control.pdf"
-# GRAPH_FG_FILENAME = "ex7_graph_f_and_g.pdf"
 
 
 # The initial conditions are chosen to be different than but within the
@@ -320,5 +318,3 @@ if __name__ == "__main__":
         control_on=True,
         graph_title="Example 7: Reference model vs controlled plant; Input $r = sin(2 \pi k / 25)$",
         graph_fig_filename=FIG_COMPARE_REF_VS_PLANT_WITH_CTRL)
-
-
